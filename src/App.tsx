@@ -144,7 +144,7 @@ const WordleOptimizer = () => {
   // Calculates a score for a word based on letter frequency and position.
   const calculateWordScore = (word, possibleWords, frequencies) => {
     let score = 0;
-    const uniqueLetters = new Set(word);
+    const uniqueLetters = new Set<string>(word);
 
     // Bonus for unique letters (more unique letters provide more information)
     score += uniqueLetters.size * 10;
