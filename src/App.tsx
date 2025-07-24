@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AlertCircle, Target, RefreshCw, Lightbulb, Upload, FileText, Shuffle, Calendar } from 'lucide-react';
 import wordListRaw from './word-list.txt?raw';
 import AnimatedBackground from './AnimatedBackground';
@@ -99,7 +99,7 @@ const WordleOptimizer = () => {
     setIsLoading(true);
     try {
       // Try to fetch from the local API
-      const response = await fetch('/api/today');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/today`);
       if (!response.ok) {
         throw new Error('Failed to fetch daily Wordle from local API');
       }

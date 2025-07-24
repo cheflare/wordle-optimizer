@@ -62,11 +62,15 @@ WordleOptimizer/
    ```bash
    npm install
    ```
-2. Start the development server:
+2. Create a .env file in the root directory:
+   ```bash
+   VITE_API_URL=http://localhost:8000
+   ```
+3. Start the development server:
    ```bash
    npm run dev
    ```
-3. Open [http://localhost:5173](http://localhost:5173) in your browser.
+4. Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ### API Usage
 - **GET /api/today**: Returns the current day's Wordle answer as `{ "word": "xxxxx" }`.
