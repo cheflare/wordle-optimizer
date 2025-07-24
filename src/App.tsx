@@ -20,6 +20,8 @@ const WordleOptimizer = () => {
   const [dailyWordDate, setDailyWordDate] = useState<string>(''); // The date of the daily Wordle word
   // Add new state for landing page
   const [page, setPage] = useState<'landing' | 'gameMode' | 'game'>('landing');
+  // Add state for hint expansion
+  const [hintExpanded, setHintExpanded] = useState(false);
 
 
   // Generates feedback for a guess based on the target word.
@@ -264,7 +266,7 @@ const WordleOptimizer = () => {
     }
 
     if (!wordList.includes(currentGuess.toLowerCase())) {
-      alert('Word not in word list');
+      alert('Invalid word, Please enter a valid one');
       return;
     }
 
@@ -388,231 +390,267 @@ const WordleOptimizer = () => {
             <p className="text-gray-600 mb-8 text-xl max-w-2xl">
               Elevate your Wordle game with our smart helper. Using probability and advanced algorithms, we recommend the best possible guesses to help you solve the puzzle in the fewest attempts.
             </p>
+
+            {/* Buttons */}
             <div className="flex flex-col md:flex-row gap-6 w-full max-w-lg">
-              <button
-                onClick={() => setPage('gameMode')}
-                className="flex-1 bg-indigo-600 text-white py-4 px-6 rounded-lg text-xl font-semibold shadow-lg hover:bg-indigo-700 transition-transform transform hover:scale-105"
-              >
-                Play as Guest
-              </button>
-              <button
-                disabled
-                className="flex-1 bg-white border-2 border-gray-300 text-gray-500 py-4 px-6 rounded-lg text-xl font-semibold shadow-lg cursor-not-allowed flex items-center justify-center gap-3"
-              >
-                <svg className="w-6 h-6" viewBox="0 0 48 48">
-                  <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
-                  <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
-                  <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
-                  <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
-                  <path fill="none" d="M0 0h48v48H0z"></path>
-                </svg>
-                Sign in with Google
-              </button>
+
+              {/* Guest Button */}
+              <div className="flex-1">
+                <button
+                  onClick={() => setPage('gameMode')}
+                  className="w-full bg-indigo-600 text-white py-8 px-6 rounded-lg text-xl font-semibold shadow-lg hover:bg-indigo-700 transition-transform transform hover:scale-105"
+                >
+                  Play as Guest
+                </button>
+              </div>
+
+              {/* Google Button + Label */}
+              <div className="flex flex-col items-center flex-1 w-full">
+                <button
+                  disabled
+                  className="w-full bg-white border-2 border-gray-300 text-gray-500 py-4 px-6 rounded-lg text-xl font-semibold shadow-lg cursor-not-allowed flex items-center justify-center gap-3"
+                >
+                  <svg className="w-6 h-6" viewBox="0 0 48 48">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                    <path fill="none" d="M0 0h48v48H0z"></path>
+                  </svg>
+                  Sign in with Google
+                </button>
+                <p className="text-xs text-gray-500 mt-2">(Coming Soon, Allows Progress Saving)</p>
+              </div>
             </div>
-            <p className="text-xs text-gray-500 mt-4">(Feature Coming Soon)</p>
           </div>
         )}
 
-        {page === 'gameMode' && (
-          <>
-            <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
-                <Target className="text-indigo-600" />
-                Wordle Optimization Bot
-              </h1>
-              <p className="text-gray-600">Probability-Based Smart Wordle Helper</p>
-            </div>
-            <div className="mb-8 bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">Choose Game Mode</h2>
-              <div className="grid md:grid-cols-3 gap-4">
-                <button
-                  onClick={startRandomGame}
-                  disabled={isLoading}
-                  className="p-4 border-2 border-indigo-200 rounded-lg hover:border-indigo-400 hover:bg-indigo-50 transition-colors disabled:opacity-50"
-                >
-                  <Shuffle className="mx-auto text-indigo-600 mb-2" size={32} />
-                  <h3 className="font-semibold text-gray-800">Random Word</h3>
-                  <p className="text-sm text-gray-600 mt-1">Take on a random Wordle challenge</p>
-                </button>
-                <button
-                  onClick={startDailyWordle}
-                  disabled={isLoading}
-                  className="p-4 border-2 border-green-200 rounded-lg hover:border-green-400 hover:bg-green-50 transition-colors disabled:opacity-50"
-                >
-                  <Calendar className="mx-auto text-green-600 mb-2" size={32} />
-                  <h3 className="font-semibold text-gray-800">Daily Wordle</h3>
-                  <p className="text-sm text-gray-600 mt-1">Practice with today's actual Wordle word</p>
-                  {isLoading && <div className="text-xs text-green-600 mt-1">Fetching today's word...</div>}
-                </button>
-                <button
-                  disabled
-                  className="p-4 border-2 border-gray-200 rounded-lg transition-colors disabled:opacity-50 cursor-not-allowed"
-                >
-                  <Calendar className="mx-auto text-gray-400 mb-2" size={32} />
-                  <h3 className="font-semibold text-gray-500">Previous Daily Wordles</h3>
-                  <p className="text-sm text-gray-400 mt-1">Coming Soon</p>
-                </button>
+        {
+          page === 'gameMode' && (
+            <>
+              <div className="text-center mb-8">
+                <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
+                  <Target className="text-indigo-600" />
+                  Wordle Optimization Bot
+                </h1>
+                <p className="text-gray-600">Probability-Based Smart Wordle Helper</p>
               </div>
-            </div>
-          </>
-        )}
+              <div className="mb-8 bg-white rounded-xl shadow-lg p-6">
+                <h2 className="text-xl font-semibold mb-4 text-gray-800">Choose Game Mode</h2>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <button
+                    onClick={startRandomGame}
+                    disabled={isLoading}
+                    className="p-4 border-2 border-indigo-200 rounded-lg hover:border-indigo-400 hover:bg-indigo-50 transition-colors disabled:opacity-50"
+                  >
+                    <Shuffle className="mx-auto text-indigo-600 mb-2" size={32} />
+                    <h3 className="font-semibold text-gray-800">Random Word</h3>
+                    <p className="text-sm text-gray-600 mt-1">Take on a random Wordle challenge</p>
+                  </button>
+                  <button
+                    onClick={startDailyWordle}
+                    disabled={isLoading}
+                    className="p-4 border-2 border-green-200 rounded-lg hover:border-green-400 hover:bg-green-50 transition-colors disabled:opacity-50"
+                  >
+                    <Calendar className="mx-auto text-green-600 mb-2" size={32} />
+                    <h3 className="font-semibold text-gray-800">Daily Wordle</h3>
+                    <p className="text-sm text-gray-600 mt-1">Practice with today's actual Wordle word</p>
+                    {isLoading && <div className="text-xs text-green-600 mt-1">Fetching today's word...</div>}
+                  </button>
+                  <button
+                    disabled
+                    className="p-4 border-2 border-gray-200 rounded-lg transition-colors disabled:opacity-50 cursor-not-allowed"
+                  >
+                    <Calendar className="mx-auto text-gray-400 mb-2" size={32} />
+                    <h3 className="font-semibold text-gray-500">Previous Daily Wordles</h3>
+                    <p className="text-sm text-gray-400 mt-1">Coming Soon</p>
+                  </button>
+                </div>
+              </div>
+            </>
+          )
+        }
 
-        {page === 'game' && (
-          <>
-            <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
-                <Target className="text-indigo-600" />
-                Wordle Optimization Bot
-              </h1>
-              <p className="text-gray-600">Probability-Based Smart Wordle Helper</p>
-            </div>
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Input Section */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-semibold mb-4 text-gray-800">Enter Your Guess</h2>
+        {
+          page === 'game' && (
+            <>
+              <div className="text-center mb-8">
+                <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
+                  <Target className="text-indigo-600" />
+                  Wordle Optimization Bot
+                </h1>
+                <p className="text-gray-600">Probability-Based Smart Wordle Helper</p>
+              </div>
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Input Section */}
+                <div className="bg-white rounded-xl shadow-lg p-6">
+                  <h2 className="text-xl font-semibold mb-4 text-gray-800">Enter Your Guess</h2>
 
-                <div className="space-y-4">
-                  {/* Target Word Display */}
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">Target Word:</span>
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
-                        {targetWordSource === 'random' && <><Shuffle size={12} /> Random</>}
-                        {targetWordSource === 'daily' && <><Calendar size={12} /> Daily ({dailyWordDate})</>}
+                  <div className="space-y-4">
+                    {/* Target Word Display */}
+                    <div className="p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-700">Target Word:</span>
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          {targetWordSource === 'random' && <><Shuffle size={12} /> Random</>}
+                          {targetWordSource === 'daily' && <><Calendar size={12} /> Daily ({dailyWordDate})</>}
+                        </div>
+                      </div>
+                      <div className="text-2xl font-mono font-bold text-center text-gray-800 uppercase tracking-widest bg-white p-3 rounded border-2 border-gray-200">
+                        {gameState === 'playing' ? '? ? ? ? ?' : targetWord.toUpperCase()}
                       </div>
                     </div>
-                    <div className="text-2xl font-mono font-bold text-center text-gray-800 uppercase tracking-widest bg-white p-3 rounded border-2 border-gray-200">
-                      {gameState === 'playing' ? '? ? ? ? ?' : targetWord.toUpperCase()}
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Your Guess (5 letters):
+                      </label>
+                      <input
+                        type="text"
+                        value={currentGuess}
+                        onChange={(e) => setCurrentGuess(e.target.value.toLowerCase())}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent uppercase tracking-widest text-center text-lg font-mono"
+                        maxLength={5}
+                        placeholder="WORDS"
+                        disabled={gameState !== 'playing'}
+                      />
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={addGuess}
+                        disabled={gameState !== 'playing'}
+                        className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
+                      >
+                        Add Guess
+                      </button>
+                      <button
+                        onClick={reset}
+                        className="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors"
+                      >
+                        <RefreshCw size={20} />
+                      </button>
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Your Guess (5 letters):
-                    </label>
-                    <input
-                      type="text"
-                      value={currentGuess}
-                      onChange={(e) => setCurrentGuess(e.target.value.toLowerCase())}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent uppercase tracking-widest text-center text-lg font-mono"
-                      maxLength={5}
-                      placeholder="WORDS"
-                      disabled={gameState !== 'playing'}
-                    />
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button
-                      onClick={addGuess}
-                      disabled={gameState !== 'playing'}
-                      className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
-                    >
-                      Add Guess
-                    </button>
-                    <button
-                      onClick={reset}
-                      className="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors"
-                    >
-                      <RefreshCw size={20} />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <div className="flex items-center gap-2 mb-2">
-                    <AlertCircle className="text-blue-600" size={20} />
-                    <h3 className="font-medium text-blue-800">Colors in Guess History:</h3>
-                  </div>
-                  <ul className="text-sm text-blue-700 space-y-1">
-                    <li><strong>Green</strong> = correct letter, correct position</li>
-                    <li><strong>Yellow</strong> = correct letter, wrong position</li>
-                    <li><strong>Gray</strong> = letter not in word</li>
-                  </ul>
-                </div>
-
-                {/* Guess History */}
-                {guesses.length > 0 && (
-                  <div className="mt-6 bg-gray-50 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold mb-3 text-gray-800">Guess History</h3>
-                    <div className="space-y-2">
-                      {guesses.map((guess, idx) => (
-                        <div key={idx} className="flex items-center gap-3 p-2 bg-white rounded">
-                          <div className="text-sm font-medium text-gray-600 w-8">#{guess.attempt}</div>
-                          <div className="flex gap-1">
-                            {guess.word.split('').map((letter, letterIdx) => (
-                              <div key={letterIdx} className="w-8 h-8 flex items-center justify-center text-white font-bold rounded">
-                                <div className={`w-full h-full flex items-center justify-center rounded ${getFeedbackColor(guess.feedback[letterIdx])}`}>
-                                  {letter.toUpperCase()}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                          <div className="text-xs text-gray-600 font-mono">{guess.feedback}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Analysis Section */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-semibold mb-4 text-gray-800">Hint</h2>
-
-                <div className="space-y-4">
-                  <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <div className="flex items-center gap-2 mb-2">
-                      <Lightbulb className="text-green-600" size={20} />
-                      <h3 className="font-medium text-green-800">Recommended Next Guess:</h3>
+                      <AlertCircle className="text-blue-600" size={20} />
+                      <h3 className="font-medium text-blue-800">Colors in Guess History:</h3>
                     </div>
-                    <div className="text-2xl font-mono font-bold text-green-700 uppercase tracking-widest">
-                      {recommendation}
-                    </div>
+                    <ul className="text-sm text-blue-700 space-y-1">
+                      <li><strong>Green</strong> = correct letter, correct position</li>
+                      <li><strong>Yellow</strong> = correct letter, wrong position</li>
+                      <li><strong>Gray</strong> = letter not in word</li>
+                    </ul>
                   </div>
 
-                  <div className="grid grid-cols-[1fr_2fr] gap-4">
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <div className="text-sm text-gray-600">Attempt</div>
-                      <div className="text-xl font-bold text-gray-800">{attempt}/6</div>
-                    </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <div className="text-sm text-gray-600">Possible Words Remaining</div>
-                      <div className="text-xl font-bold text-gray-800">{possibleWords.length}</div>
-                    </div>
-                  </div>
-
-                  {possibleWords.length <= 10 && possibleWords.length > 1 && (
-                    <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                      <h3 className="font-medium text-yellow-800 mb-2">Remaining Possibilities:</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {possibleWords.slice(0, 10).map((word, idx) => (
-                          <span key={idx} className="px-2 py-1 bg-yellow-200 text-yellow-800 rounded text-sm font-mono uppercase">
-                            {word}
-                          </span>
+                  {/* Guess History */}
+                  {guesses.length > 0 && (
+                    <div className="mt-6 bg-gray-50 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold mb-3 text-gray-800">Guess History</h3>
+                      <div className="space-y-2">
+                        {guesses.map((guess, idx) => (
+                          <div key={idx} className="flex items-center gap-3 p-2 bg-white rounded">
+                            <div className="text-sm font-medium text-gray-600 w-8">#{guess.attempt}</div>
+                            <div className="flex gap-1">
+                              {guess.word.split('').map((letter, letterIdx) => (
+                                <div key={letterIdx} className="w-8 h-8 flex items-center justify-center text-white font-bold rounded">
+                                  <div className={`w-full h-full flex items-center justify-center rounded ${getFeedbackColor(guess.feedback[letterIdx])}`}>
+                                    {letter.toUpperCase()}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                            <div className="text-xs text-gray-600 font-mono">{guess.feedback}</div>
+                          </div>
                         ))}
                       </div>
                     </div>
                   )}
+                </div>
 
-                  {/* Letter Frequency Display */}
-                  <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
-                    <h3 className="font-medium text-indigo-800 mb-2">Most Common Letter Probabilities in Remaining Words:</h3>
-                    <div className="grid grid-cols-4 gap-2">
-                      {getTopLetters().map(({ letter, freq }) => (
-                        <div key={letter} className="text-center">
-                          <div className="font-mono font-bold text-indigo-700">{letter}</div>
-                          <div className="text-xs text-indigo-600">{freq}%</div>
+                {/* Analysis Section */}
+                {hintExpanded ? (
+                  <div className="bg-white rounded-xl shadow-lg p-6">
+                    {/* Collapsible Hint Header */}
+                    <div
+                      className={`select-none cursor-pointer flex items-center gap-2 text-xl font-semibold text-gray-800 mb-4`}
+                      onClick={() => setHintExpanded((v) => !v)}
+                      tabIndex={0}
+                      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setHintExpanded(v => !v); }}
+                      aria-expanded={hintExpanded}
+                      aria-controls="hint-content"
+                    >
+                      <span>Hint</span>
+                      <span className="ml-1 text-gray-500 text-base">▲</span>
+                    </div>
+                    <div id="hint-content" className="space-y-4">
+                      <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Lightbulb className="text-green-600" size={20} />
+                          <h3 className="font-medium text-green-800">Recommended Next Guess:</h3>
                         </div>
-                      ))}
+                        <div className="text-2xl font-mono font-bold text-green-700 uppercase tracking-widest">
+                          {recommendation}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-[1fr_2fr] gap-4">
+                        <div className="p-3 bg-gray-50 rounded-lg">
+                          <div className="text-sm text-gray-600">Attempt</div>
+                          <div className="text-xl font-bold text-gray-800">{attempt}/6</div>
+                        </div>
+                        <div className="p-3 bg-gray-50 rounded-lg">
+                          <div className="text-sm text-gray-600">Possible Words Remaining</div>
+                          <div className="text-xl font-bold text-gray-800">{possibleWords.length}</div>
+                        </div>
+                      </div>
+                      {possibleWords.length <= 10 && possibleWords.length > 1 && (
+                        <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                          <h3 className="font-medium text-yellow-800 mb-2">Remaining Possibilities:</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {possibleWords.slice(0, 10).map((word, idx) => (
+                              <span key={idx} className="px-2 py-1 bg-yellow-200 text-yellow-800 rounded text-sm font-mono uppercase">
+                                {word}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {/* Letter Frequency Display */}
+                      <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                        <h3 className="font-medium text-indigo-800 mb-2">Most Common Letter Probabilities in Remaining Words:</h3>
+                        <div className="grid grid-cols-4 gap-2">
+                          {getTopLetters().map(({ letter, freq }) => (
+                            <div key={letter} className="text-center">
+                              <div className="font-mono font-bold text-indigo-700">{letter}</div>
+                              <div className="text-xs text-indigo-600">{freq}%</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div
+                    className="select-none cursor-pointer flex flex-row items-center gap-1 text-xl font-semibold text-gray-800 bg-white rounded-full shadow px-20 py-10 w-fit"
+                    style={{ margin: 0, minHeight: 'unset', background: 'white', height: '2.2rem', lineHeight: '2.2rem' }}
+                    onClick={() => setHintExpanded(true)}
+                    tabIndex={0}
+                    onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setHintExpanded(true); }}
+                    aria-expanded={false}
+                    aria-controls="hint-content"
+                  >
+                    <span style={{ padding: 0, margin: 0, lineHeight: '2rem', height: '2rem', display: 'inline-block' }}>Hint</span>
+                    <span className="text-gray-500 text-base" style={{ lineHeight: '2rem', height: '2rem', display: 'inline-block' }}>▼</span>
+                  </div>
+                )}
               </div>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
+            </>
+          )
+        }
+      </div >
+    </div >
   );
 };
 

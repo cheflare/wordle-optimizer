@@ -17,8 +17,8 @@ const AnimatedBackground = () => {
 
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
     const font_size = 18;
-    const columns = Math.floor(width / font_size);
-    const drops: number[] = [];
+    let columns = Math.floor(width / font_size);
+    let drops: number[] = [];
 
     for (let x = 0; x < columns; x++) {
       drops[x] = 1;
@@ -50,6 +50,18 @@ const AnimatedBackground = () => {
       height = window.innerHeight;
       canvas.width = width;
       canvas.height = height;
+      // Recalculate columns and update drops array
+      const newColumns = Math.floor(width / font_size);
+      if (newColumns > columns) {
+        // Add new drops for new columns
+        for (let x = columns; x < newColumns; x++) {
+          drops[x] = 1;
+        }
+      } else if (newColumns < columns) {
+        // Remove drops for removed columns
+        drops = drops.slice(0, newColumns);
+      }
+      columns = newColumns;
     };
 
     window.addEventListener('resize', handleResize);
