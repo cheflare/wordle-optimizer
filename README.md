@@ -1,5 +1,5 @@
 # WordleOptimizer
-A web application providing hints for **probability-based Wordle optimization**, using concepts like **Shannon Entropy**, **Expected Information Gain**, and **Bayesian Updating** to recommend optimal guesses and reduce uncertainty.
+A web application with multiple Wordle game modes that provides **probability-based** hints using concepts like **Shannon Entropy**, **Expected Information Gain**, and **Bayesian Updating** to recommend optimal guesses that efficiently narrow down the set of possible solutions.
 
 Wordle is a popular New York Times word-guessing game where players have six attempts to identify a hidden five-letter word, receiving color-coded feedback after each guess.
 
