@@ -62,29 +62,6 @@ class WordleScraper:
             print(f"Error extracting from {url}: {e}")
             return None
 
-    # Searches DuckDuckGo for a query and returns the top search result links.
-    def search_duckduckgo(self, query):
-        search_url = f"https://duckduckgo.com/html/?q={query.replace(' ', '+')}"
-        print(f"🦆 DuckDuckGo search URL: {search_url}")
-        try:
-            headers = {
-                'User-Agent': self.headers['User-Agent'],
-                'Accept': 'text/html,application/xhtml+xml',
-                'Accept-Language': 'en-US,en;q=0.5'
-            }
-            response = requests.get(search_url, headers=headers, timeout=10)
-            soup = BeautifulSoup(response.content, 'html.parser')
-            links = []
-            for result in soup.find_all('a'):
-                href = result.get('href')
-                # Filter for relevant links.
-                if href and 'wordle' in href.lower() and not href.startswith('/') and not href.startswith('javascript'):
-                    links.append(href)
-            return links[:5]
-        except Exception as e:
-            print(f"❌ Error searching DuckDuckGo: {e}")
-            return []
-
     # Main method to get the Wordle answer.
     def get_wordle_answer(self, date=None):
         date_str = self.get_date_string(date)
@@ -96,21 +73,6 @@ class WordleScraper:
             if answer:
                 return answer
             time.sleep(1) # Be respectful and don't spam requests.
-
-        # If known sites fail, search DuckDuckGo for more sources.
-        queries = [
-            f"Today's Wordle Hints for {date_str}",
-            f"Wordle Answer Today {date_str}"
-        ]
-        for query in queries:
-            print(f"🔍 Searching DuckDuckGo for: {query}")
-            links = self.search_duckduckgo(query)
-            for link in links:
-                print(f"🌐 Checking: {link}")
-                answer = self.extract_wordle_answer(link)
-                if answer:
-                    return answer
-                time.sleep(1)
         return None
 
 # Main function to run the scraper.
