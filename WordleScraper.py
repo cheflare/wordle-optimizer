@@ -23,7 +23,10 @@ class WordleScraper:
     # Returns a list of known websites that publish the Wordle answer.
     def get_known_wordle_sites(self, date_str):
         date_obj = datetime.strptime(date_str, "%B %d, %Y")
-        month_day_year = date_obj.strftime("%B-%d-%Y").lower()
+        # Format day without leading zero for compatibility with the URL structure (e.g., january-1-2025)
+        day = date_obj.strftime("%-d" if date_obj.day < 10 else "%d")
+        month_year = date_obj.strftime("%B-%Y").lower()
+        month_day_year = f"{date_obj.strftime('%B').lower()}-{day}-{date_obj.year}"
         return [
             f"https://beebom.com/todays-wordle-hints-answer-{month_day_year}/"
         ]

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { AlertCircle, Target, RefreshCw, Lightbulb, Upload, FileText, Shuffle, Calendar } from 'lucide-react';
+import { AlertCircle, Target, RefreshCw, Lightbulb, Upload, FileText, Shuffle, Calendar, Repeat } from 'lucide-react';
 import wordListRaw from './word-list.txt?raw';
 import AnimatedBackground from './AnimatedBackground';
+import CalendarModal from './CalendarModal';
 
 // Main component for the Wordle Optimizer application
 const WordleOptimizer = () => {
@@ -18,6 +19,10 @@ const WordleOptimizer = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false); // Whether the app is in a loading state
   const [targetWordSource, setTargetWordSource] = useState<string>(''); // 'random', 'daily', or 'manual'
   const [dailyWordDate, setDailyWordDate] = useState<string>(''); // The date of the daily Wordle word
+  const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
+  const [isFetchingDaily, setIsFetchingDaily] = useState<boolean>(false);
+  const [isReplay, setIsReplay] = useState<boolean>(false);
+  const [isFetchingPast, setIsFetchingPast] = useState<boolean>(false);
   // Add new state for landing page
   const [page, setPage] = useState<'landing' | 'gameMode' | 'game'>('landing');
   // Add state for hint expansion
@@ -97,6 +102,7 @@ const WordleOptimizer = () => {
   // Fetches the daily Wordle word from a local API.
   const fetchDailyWordle = async () => {
     setIsLoading(true);
+    setIsFetchingDaily(true);
     try {
       // Try to fetch from the local API
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/today`);
@@ -125,6 +131,47 @@ const WordleOptimizer = () => {
       return getRandomWord(); // Fallback to random word
     } finally {
       setIsLoading(false);
+      setIsFetchingDaily(false);
+    }
+  };
+
+  const fetchWordleForDate = async (date: string) => {
+    setIsLoading(true);
+    setIsFetchingPast(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/wordle/${date}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch Wordle for ${date}`);
+      }
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      const word = data.word?.toLowerCase();
+      if (!word) {
+        throw new Error(`No word found for ${date}`);
+      }
+      if (wordList.length > 0 && !wordList.includes(word)) {
+        console.warn(`Word for ${date} not in your word list, but using it anyway.`);
+      }
+      setTargetWord(word);
+      setTargetWordSource('replay');
+      const dateObj = new Date(date);
+      const formattedDate = `${dateObj.getMonth() + 1}/${dateObj.getDate()}/${dateObj.getFullYear()}`;
+      setDailyWordDate(formattedDate);
+      setPossibleWords(wordList);
+      setGuesses([]);
+      setCurrentGuess('');
+      setGameState('playing');
+      setAttempt(1);
+      setRecommendation(getOptimalGuess(wordList, [], letterFreq));
+      setPage('game');
+    } catch (error) {
+      console.error(`Error fetching Wordle for ${date}:`, error);
+      alert(`Could not fetch the Wordle for ${date}. Please try another date.`);
+    } finally {
+      setIsLoading(false);
+      setIsFetchingPast(false);
     }
   };
 
@@ -454,19 +501,26 @@ const WordleOptimizer = () => {
                   >
                     <Calendar className="mx-auto text-green-600 mb-2" size={32} />
                     <h3 className="font-semibold text-gray-800">Daily Wordle</h3>
-                    <p className="text-sm text-gray-600 mt-1">Practice with today's actual Wordle word</p>
-                    {isLoading && <div className="text-xs text-green-600 mt-1">Fetching today's word...</div>}
+                    <p className="text-sm text-gray-600 mt-1">Practice with today's Wordle answer</p>
+                    {isLoading && isFetchingDaily && <div className="text-xs text-green-600 mt-1">Fetching today's wordle...</div>}
                   </button>
                   <button
-                    disabled
-                    className="p-4 border-2 border-gray-200 rounded-lg transition-colors disabled:opacity-50 cursor-not-allowed"
+                    onClick={() => setIsCalendarOpen(true)}
+                    disabled={isLoading}
+                    className="p-4 border-2 border-blue-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors disabled:opacity-50"
                   >
-                    <Calendar className="mx-auto text-gray-400 mb-2" size={32} />
-                    <h3 className="font-semibold text-gray-500">Previous Daily Wordles</h3>
-                    <p className="text-sm text-gray-400 mt-1">Coming Soon</p>
+                    <Repeat className="mx-auto text-blue-600 mb-2" size={32} />
+                    <h3 className="font-semibold text-gray-800">Past Wordles</h3>
+                    <p className="text-sm text-gray-600 mt-1">Select a past Wordle to replay</p>
+                    {isLoading && isFetchingPast && <div className="text-xs text-blue-600 mt-1">Fetching past wordle...</div>}
                   </button>
                 </div>
               </div>
+              <CalendarModal
+                isOpen={isCalendarOpen}
+                onClose={() => setIsCalendarOpen(false)}
+                onDateSelect={fetchWordleForDate}
+              />
             </>
           )
         }
@@ -494,6 +548,7 @@ const WordleOptimizer = () => {
                         <div className="flex items-center gap-2 text-xs text-gray-500">
                           {targetWordSource === 'random' && <><Shuffle size={12} /> Random</>}
                           {targetWordSource === 'daily' && <><Calendar size={12} /> Daily ({dailyWordDate})</>}
+                          {targetWordSource === 'replay' && <><Repeat size={12} /> Replay ({dailyWordDate})</>}
                         </div>
                       </div>
                       <div className="text-2xl font-mono font-bold text-center text-gray-800 uppercase tracking-widest bg-white p-3 rounded border-2 border-gray-200">

@@ -9,20 +9,19 @@ Built with **React**, **FastAPI**, and **Python scraping tools**.
 
 ## Implemented Features
 - **Smart Wordle Hints**: See how many valid words remain based on your previous guesses, view a color-coded guess history, analyze letter frequencies of remaining options, and receive optimal next guesses.
-- **Daily Wordle Fetcher**: Automatically retrieves the current day’s Wordle answer through a backend API.
-- **Multiple Game Modes**: Play with a random word or the current day's Wordle.
+- **Multiple Game Modes**: Play with a random word, the current day's Wordle answer, or replay past Wordle answers by selecting a date (note: only dates from December 5th, 2024 onwards are supported).
+- **Wordle Answer Scraper**: A backend API that can fetch the Wordle answer for the current day or a specific date provided by the user.
 
 ## Planned Features
-- Replay Past Wordles Game Mode
-- Firebase or Supabase authentication and progress storing
+- Supabase authentication and progress storing
 - More advanced statistics and visualizations
 
 ## Word List Attribution
 The word list used in this project is from [dracos/valid-wordle-words.txt](https://gist.github.com/dracos/dd0668f281e685bad51479e5acaadb93), created by M Somerville ([dracos on GitHub](https://github.com/dracos)). Thanks!
 
 ## Scraping Policy
-- The backend scrapes only the daily Wordle answer from beebom.com, strictly following [beebom.com's robots.txt](https://www.beebom.com/robots.txt) and terms of service.
-- No excessive or abusive requests are made; scraping is limited to the daily answer for research and educational purposes only.
+- The backend scrapes and fetches only the Wordle answer from beebom.com for the current day or a user-specified date, strictly following [beebom.com's robots.txt](https://www.beebom.com/robots.txt) and terms of service.
+- No excessive or abusive requests are made; scraping is limited to fetching answers for research and educational purposes only.
 
 ## Project Structure
 
@@ -74,6 +73,7 @@ WordleOptimizer/
 
 ### API Usage
 - **GET /api/today**: Returns the current day's Wordle answer as `{ "word": "xxxxx" }`.
+- **GET /api/wordle/{date_str}**: Returns the Wordle answer for a specific date (formatted as YYYY-MM-DD) as `{ "word": "xxxxx" }`.
 
 ## Dependencies
 
