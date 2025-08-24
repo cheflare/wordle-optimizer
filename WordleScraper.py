@@ -23,13 +23,27 @@ class WordleScraper:
     # Returns a list of known websites that publish the Wordle answer.
     def get_known_wordle_sites(self, date_str):
         date_obj = datetime.strptime(date_str, "%B %d, %Y")
-        # Format day without leading zero for compatibility with the URL structure (e.g., january-1-2025)
-        day = date_obj.strftime("%-d" if date_obj.day < 10 else "%d")
-        month_year = date_obj.strftime("%B-%Y").lower()
-        month_day_year = f"{date_obj.strftime('%B').lower()}-{day}-{date_obj.year}"
-        return [
-            f"https://beebom.com/todays-wordle-hints-answer-{month_day_year}/"
-        ]
+        
+        # Define the cutoff date for the URL format change.
+        cutoff_date = datetime(2025, 8, 23)
+
+        if date_obj < cutoff_date:
+            # Old URL format for dates before August 23, 2025
+            # Format day without leading zero for compatibility with the URL structure (e.g., january-1-2025)
+            day = date_obj.strftime("%-d" if date_obj.day < 10 else "%d")
+            month_day_year = f"{date_obj.strftime('%B').lower()}-{day}-{date_obj.year}"
+            return [
+                f"https://beebom.com/todays-wordle-hints-answer-{month_day_year}/"
+            ]
+        else:
+            # New URL format for dates on or after August 23, 2025
+            day = date_obj.strftime("%d")
+            month = date_obj.strftime('%B').lower()
+            year = date_obj.year
+            date_slug = f"{day}-{month}-{year}"
+            return [
+                f"https://beebom.com/nyt-wordle-today-{date_slug}/"
+            ]
 
     # Extracts the Wordle answer from the HTML of a webpage using regex patterns.
     def extract_wordle_answer_fallback_from_html(self, html_text, source_url=""):
