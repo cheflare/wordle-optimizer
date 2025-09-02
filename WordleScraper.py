@@ -37,7 +37,7 @@ class WordleScraper:
             ]
         else:
             # New URL format for dates on or after August 23, 2025
-            day = date_obj.strftime("%d")
+            day = date_obj.strftime("%-d")
             month = date_obj.strftime('%B').lower()
             year = date_obj.year
             date_slug = f"{day}-{month}-{year}"
