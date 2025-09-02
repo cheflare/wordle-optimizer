@@ -243,7 +243,7 @@ const WordleOptimizer = () => {
 
     // For the first guess, use a common starter word if available.
     if (previousGuesses.length === 0) {
-      const commonStarters = ['adieu', 'audio', 'orate', 'arise', 'raise', 'slate', 'trace', 'crate', 'stare'];
+      const commonStarters = ['trone', 'crate', 'carte', 'slart' , 'trace', 'salet'];
       const availableStarter = commonStarters.find(word => candidateWords.includes(word));
       if (availableStarter) return availableStarter;
     }
