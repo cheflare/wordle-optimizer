@@ -5,6 +5,11 @@ node_modules/
 # Python
 __pycache__/
 *.pyc
+venv/
+
+# Cache files (auto-generated)
+wordle_answers.json
+wordle_answers.csv
 
 # MacOS
 .DS_Store

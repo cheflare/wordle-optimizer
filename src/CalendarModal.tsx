@@ -23,7 +23,7 @@ const CalendarModal: React.FC<CalendarModalProps> = ({ isOpen, onClose, onDateSe
   };
 
   const today = new Date().toISOString().split('T')[0];
-  const firstWordleDate = '2024-12-05';
+  const firstWordleDate = '2021-06-19'; // First ever Wordle puzzle
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
