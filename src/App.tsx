@@ -99,22 +99,33 @@ const WordleOptimizer = () => {
     return wordList[randomIndex];
   };
 
-  // Fetches the daily Wordle word from a local API.
+  // Fetches the daily Wordle word from the API using today's date.
   const fetchDailyWordle = async () => {
     setIsLoading(true);
     setIsFetchingDaily(true);
     try {
-      // Try to fetch from the local API
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/today`);
+      // Get today's date in YYYY-MM-DD format
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const todayStr = `${year}-${month}-${day}`;
+
+      // Use the same endpoint as past wordles
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/wordle/${todayStr}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch daily Wordle from local API');
+        throw new Error('Failed to fetch daily Wordle from API');
       }
 
       const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
       const dailyWord = data.word?.toLowerCase();
 
       if (!dailyWord) {
-        throw new Error('No word found in response from local API');
+        throw new Error('No word found in response from API');
       }
 
       // Check if the word is in our word list
@@ -122,7 +133,6 @@ const WordleOptimizer = () => {
         console.warn('Daily word not in your word list, but using it anyway.');
       }
 
-      const today = new Date();
       setDailyWordDate(today.toLocaleDateString());
       return dailyWord;
     } catch (error) {

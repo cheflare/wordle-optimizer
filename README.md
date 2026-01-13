@@ -116,8 +116,8 @@ python WordleScraper.py
 The scraper automatically caches results and will use the cache if it's less than 24 hours old.
 
 ### API Usage
-- **GET /api/today**: Returns the current day's Wordle answer as `{ "word": "xxxxx" }`.
-- **GET /api/wordle/{date_str}**: Returns the Wordle answer for a specific date (formatted as YYYY-MM-DD) as `{ "word": "xxxxx" }`.
+- **GET /api/wordle/{date_str}**: Returns the Wordle answer for a specific date (formatted as YYYY-MM-DD) as `{ "word": "xxxxx" }`. This is used for both daily and past Wordle lookups.
+- **GET /api/today**: Legacy endpoint that also returns the current day's Wordle answer.
 
 ## Dependencies
 
